@@ -1,110 +1,71 @@
-<?php include __DIR__ . '/../layout/header.php'; ?>
+<?php include __DIR__ . '/../layout/header.php'; ?> <!-- Inclui o cabeçalho da página (navbar, CSS, etc.) -->
 
-<div class="mb-4">
-    <input type="text" id="search" class="form-control" placeholder="Buscar livros ou autores...">
-</div>
-<div id="search-results" class="list-group mb-4"></div>
+<!-- Container principal para a lista de livros -->
+<div class="container d-flex justify-content-center mt-5">
+    <div class="w-75"> <!-- Define largura de 75% da tela -->
+        <h3 class="text-center mb-4">📚 Lista de Livros</h3> <!-- Título da página -->
 
-<a href="index.php?acao=cadastrar" class="btn btn-success mb-2">Cadastrar Livro</a>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Título</th>
-            <th>Autor</th>
-            <th>Ano</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php if(!empty($livros)): ?>
-            <?php foreach($livros as $l): ?>
-            <tr>
-                <td><?= $l['id'] ?></td>
-                <td><?= $l['titulo'] ?></td>
-                <td><?= $l['autor'] ?? 'Não definido' ?></td>
-                <td><?= $l['ano_publicacao'] ?></td>
-                <td><?= $l['status'] ?? 'DISPONÍVEL' ?></td>
-                <td>
-                    <a href="index.php?acao=editar&id=<?= $l['id'] ?>" class="btn btn-primary btn-sm">Editar</a>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <tr><td colspan="6">Nenhum livro cadastrado.</td></tr>
-        <?php endif; ?>
-    </tbody>
-</table>
-
-<script>
-document.getElementById('search').addEventListener('input', function() {
-    const query = this.value.trim();
-    if (!query) {
-        document.getElementById('search-results').innerHTML = '';
-        return;
-    }
-
-    fetch(`index.php?acao=buscar&q=${encodeURIComponent(query)}`)
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById('search-results').innerHTML = html;
-        });
-});
-</script>
-
-<div class="mb-4 d-flex gap-3">
-    <select id="filter-author" class="form-select">
-        <option value="">Todos os autores</option>
-        <?php foreach($autores as $a): ?>
-            <option value="<?= $a['id'] ?>"><?= $a['nome'] ?></option>
-        <?php endforeach; ?>
-    </select>
-
-    <select id="filter-status" class="form-select">
-        <option value="">Todos os status</option>
-        <option value="DISPONÍVEL">Disponível</option>
-        <option value="INDISPONÍVEL">Indisponível</option>
-    </select>
-
-    <button id="apply-filters" class="btn btn-primary">Filtrar</button>
-</div>
-
-<div id="book-list">
-    <?php foreach($livros as $l): ?>
-        <div class="card mb-3 p-3 book-card" data-autor="<?= $l['autor_id'] ?>" data-status="<?= $l['status'] ?>">
-            <h5><?= $l['titulo'] ?></h5>
-            <p><?= $l['autor'] ?> | <?= $l['ano_publicacao'] ?></p>
+        <!-- Barra de pesquisa -->
+        <div class="mb-3">
+            <input type="text" id="search" class="form-control" placeholder="🔍 Pesquisar por ID ou Título...">
+            <!-- Input para filtrar livros por ID ou título -->
         </div>
-    <?php endforeach; ?>
+
+        <!-- Tabela de livros -->
+        <table class="table table-bordered text-center">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Ano</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="livros-table">
+                <?php if(!empty($livros)): ?> <!-- Verifica se existem livros -->
+                    <?php foreach($livros as $l): ?> <!-- Itera sobre cada livro -->
+                        <tr>
+                            <td><?= $l['id'] ?></td> <!-- Exibe ID do livro -->
+                            <td><?= $l['titulo'] ?></td> <!-- Exibe título do livro -->
+                            <td><?= $l['autor'] ?? 'Não definido' ?></td> <!-- Exibe autor ou texto padrão -->
+                            <td><?= $l['ano_publicacao'] ?></td> <!-- Exibe ano de publicação -->
+                            <td><?= $l['status'] ?? 'DISPONÍVEL' ?></td> <!-- Exibe status ou padrão DISPONÍVEL -->
+                            <td>
+                                <!-- Link para editar o livro -->
+                                <a href="index.php?acao=editar&id=<?= $l['id'] ?>" class="btn btn-primary btn-sm">Editar</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?> <!-- Caso não haja livros cadastrados -->
+                    <tr>
+                        <td colspan="6">Nenhum livro cadastrado.</td> <!-- Mensagem informativa -->
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-document.getElementById('apply-filters').addEventListener('click', function() {
-    const author = document.getElementById('filter-author').value;
-    const status = document.getElementById('filter-status').value;
-    document.querySelectorAll('.book-card').forEach(card => {
-        const matchAuthor = !author || card.dataset.autor === author;
-        const matchStatus = !status || card.dataset.status === status;
-        card.style.display = (matchAuthor && matchStatus) ? 'block' : 'none';
-    });
-});
-</script>
-<button class="btn btn-outline-warning btn-sm favorite-btn" data-id="<?= $l['id'] ?>">
-    ⭐
-</button>
+// Script para filtrar a tabela de livros ao digitar na barra de pesquisa
+document.getElementById('search').addEventListener('input', function() {
+    const searchValue = this.value.toLowerCase(); // Valor digitado pelo usuário, convertido para minúsculas
+    const rows = document.querySelectorAll('#livros-table tr'); // Seleciona todas as linhas da tabela
 
-<script>
-document.querySelectorAll('.favorite-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const bookId = this.dataset.id;
-        fetch(`index.php?acao=favorito&id=${bookId}`)
-            .then(() => {
-                this.classList.toggle('btn-warning');
-            });
+    rows.forEach(row => {
+        const id = row.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || ''; // Pega o ID da linha
+        const title = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || ''; // Pega o título da linha
+        
+        // Mostra a linha se ID ou título contiverem o valor digitado
+        if (id.includes(searchValue) || title.includes(searchValue)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none'; // Esconde a linha caso não corresponda
+        }
     });
 });
 </script>
 
-<?php include __DIR__ . '/../layout/footer.php'; ?>
+<?php include __DIR__ . '/../layout/footer.php'; ?> <!-- Inclui o rodapé da página -->

@@ -1,26 +1,28 @@
 /* style.css */
 
+/* Estilização dos cards de livros */
 .book-card { 
-    transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s; /* Define animação suave para movimento e sombra */
+    cursor: pointer; /* Mostra o cursor de "mãozinha" ao passar o mouse */
 }
 
 .book-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    transform: translateY(-5px); /* Move o card levemente para cima no hover */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2); /* Adiciona sombra para dar efeito de destaque */
 }
 
-/* Você pode adicionar mais estilos gerais aqui */
+/* Estilos gerais da página */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    font-family: Arial, sans-serif; /* Define a fonte padrão */
+    background-color: #f8f9fa; /* Cor de fundo clara (cinza suave) */
 }
 
+/* Estilização de botões grandes */
 .btn-lg {
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s; /* Suaviza os efeitos no hover */
 }
 
 .btn-lg:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transform: translateY(-2px); /* Move o botão levemente para cima */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* Cria sombra no botão para dar sensação de profundidade */
 }
