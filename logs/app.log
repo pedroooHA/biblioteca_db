@@ -1,0 +1,2 @@
+[2025-09-18T05:34:02.563873+02:00] controle_estoque.ERROR: SQLSTATE[HY000] [1049] Unknown database 'estoque_db' [] []
+[2025-09-18T05:34:04.202063+02:00] controle_estoque.ERROR: SQLSTATE[HY000] [1049] Unknown database 'estoque_db' [] []
